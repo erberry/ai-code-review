@@ -1,0 +1,56 @@
+<!-- popup.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>GitLab AI Code Review</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>GitLab AI 代码评审</h1>
+    </div>
+
+    <div class="settings">
+      <h2>设置</h2>
+      <div class="form-group">
+        <label for="api-key">API密钥:</label>
+        <input type="password" id="api-key" placeholder="输入您的API密钥">
+      </div>
+
+      <div class="form-group">
+        <label for="model-select">选择模型:</label>
+        <select id="model-select">
+          <option value="gpt-4">OpenAI GPT-4</option>
+          <option value="claude-3-7-sonnet-20250219">Anthropic Claude 3.7 Sonnet</option>
+          <option value="qwen-max">通义千问 Max</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="language-specific">启用语言特定评审:</label>
+        <input type="checkbox" id="language-specific" checked>
+      </div>
+
+      <button id="save-settings">保存设置</button>
+    </div>
+
+    <div class="instructions">
+      <h2>使用说明</h2>
+      <p>1. 在GitLab的Merge Request页面上选择代码</p>
+      <p>2. 右键点击并选择"AI评审选中代码"</p>
+      <p>3. 或使用快捷键 <kbd>Alt+R</kbd> 对选中代码进行评审</p>
+    </div>
+
+    <div class="footer">
+      <p>版本 1.0.0</p>
+      <button id="clear-data">清除数据</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+
+</html>
