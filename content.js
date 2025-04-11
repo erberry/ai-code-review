@@ -19,12 +19,12 @@
   function detectDarkMode() {
     // 检查系统暗黑模式
     const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     // 检查GitLab暗黑模式 (检查body上的类或其他暗黑模式指示器)
-    const gitlabDarkMode = document.body.classList.contains('gl-dark') || 
-                          document.body.classList.contains('dark-mode') ||
-                          document.documentElement.classList.contains('dark-mode');
-    
+    const gitlabDarkMode = document.body.classList.contains('gl-dark') ||
+      document.body.classList.contains('dark-mode') ||
+      document.documentElement.classList.contains('dark-mode');
+
     return systemDarkMode || gitlabDarkMode;
   }
 
@@ -79,12 +79,12 @@
 
     reviewPanel = document.createElement('div');
     reviewPanel.className = 'gitlab-ai-review-panel hidden'; // 添加hidden类，初始隐藏面板
-    
+
     // 添加暗黑模式类
     if (isDarkMode) {
       reviewPanel.classList.add('dark-mode');
     }
-    
+
     reviewPanel.innerHTML = `
       <div class="review-header">
         <h3>AI 代码评审</h3>
@@ -304,15 +304,17 @@ ${code}
           ],
           temperature: 0.1
         };
-      } else if (data.model && data.model.startsWith('qwen')) {
+      } else if (data.model && data.model.startsWith('ali-')) {
+
         // 通义千问 API (与OpenAI格式一致)
         apiUrl = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
         headers = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${data.apiKey}`
         };
+        const qwenModel = data.model.replace('ali-', '');
         requestBody = {
-          model: data.model || 'qwen-max',
+          model: qwenModel || 'qwen-max',
           messages: [
             {
               role: 'system',
@@ -372,7 +374,7 @@ ${code}
       let reviewContent;
       if (data.model && data.model.startsWith('claude')) {
         reviewContent = response.content[0].text;
-      } else if (data.model && data.model.startsWith('qwen')) {
+      } else if (data.model && data.model.startsWith('ali-')) {
         reviewContent = response.choices[0].message.content;
       } else {
         reviewContent = response.choices[0].message.content;
