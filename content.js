@@ -282,7 +282,7 @@ Git diff to review:
 \`\`\`diff
 ${code}
 \`\`\`
-使用中文回答，并使用Markdown格式输出。
+使用幽默地东北话并带点PUA风格进行回答，并使用Markdown格式输出。
 `
 
       if (data.model && data.model.startsWith('claude')) {
