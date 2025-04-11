@@ -512,9 +512,9 @@ ${code}
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
 
-      // 修改按钮位置，显示在选择区域的左侧而不是右侧
-      const x = rect.left + window.scrollX - 20; // 向左偏移35px
-      const y = rect.top + window.scrollY;
+      // 修改按钮位置，显示在选择区域的左下方
+      const x = rect.left + window.scrollX - 20; // 向左偏移20px
+      const y = rect.bottom + window.scrollY - 5; // 底部位置下移5px
 
       showSelectionButton(x, y);
     } else {
@@ -561,6 +561,25 @@ ${code}
           flex-direction: column;
           overflow: hidden;
           transition: transform 0.3s ease;
+        }
+        
+        /* 调整大小手柄样式 */
+        .resize-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 5px;
+          height: 100%;
+          cursor: ew-resize;
+          background: transparent;
+        }
+        
+        .resize-handle:hover {
+          background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .resize-handle:hover {
+          background: rgba(255, 255, 255, 0.1);
         }
         
         /* 暗黑模式样式 */
@@ -743,6 +762,10 @@ ${code}
 
       // 创建评审面板，但不显示
       reviewPanel = createReviewPanel();
+      
+      // 使面板可拖动和可调整大小
+      makePanelDraggable();
+      makePanelResizable();
 
       // 创建选择按钮，但不显示
       selectionButton = createSelectionButton();
@@ -819,6 +842,45 @@ ${code}
     });
 
     header.style.cursor = 'grab';
+  }
+  
+  // 使面板可调整大小
+  function makePanelResizable() {
+    // 创建调整大小的手柄
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    reviewPanel.appendChild(resizeHandle);
+    
+    let isResizing = false;
+    let startX, startWidth;
+    
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startX = e.clientX;
+      startWidth = parseInt(document.defaultView.getComputedStyle(reviewPanel).width, 10);
+      
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      
+      // 计算新宽度 (从右侧减少宽度)
+      const newWidth = startWidth - (e.clientX - startX);
+      
+      // 限制最小宽度
+      if (newWidth > 250) {
+        reviewPanel.style.width = `${newWidth}px`;
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        document.body.style.cursor = '';
+      }
+    });
   }
 
   // 页面加载完成后初始化
