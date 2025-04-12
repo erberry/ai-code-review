@@ -505,29 +505,32 @@ ${code}
   }
 
   // 处理文本选择事件
-  function handleTextSelection() {
+  function handleTextSelection(event) {
     const selection = window.getSelection();
     if (selection.toString().trim()) {
-      // 获取选择区域的位置
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
+      // 使用鼠标事件的位置
+      let x, y;
       
-      // 计算视口中的位置
-      const viewportX = rect.left;
-      const viewportY = rect.bottom;
-      
-      // 计算文档中的绝对位置
-      const x = viewportX + window.scrollX;
-      const y = viewportY + window.scrollY;
+      if (event && event.type === 'mouseup') {
+        // 如果是鼠标事件，直接使用鼠标位置
+        x = event.clientX + window.scrollX;
+        y = event.clientY + window.scrollY;
+      } else {
+        // 如果不是鼠标事件，使用选择区域的位置作为后备
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        x = rect.right + window.scrollX;
+        y = rect.bottom + window.scrollY;
+      }
       
       // 确保按钮不会超出视口边界
       const buttonWidth = 28; // 按钮宽度
       const buttonHeight = 28; // 按钮高度
-      const margin = 5; // 与选择区域的间距
+      const margin = 5; // 边距
       
-      // 优先显示在选择区域的右下角，如果空间不足则调整
-      let posX = Math.min(x + margin, document.documentElement.clientWidth + window.scrollX - buttonWidth - margin);
-      let posY = Math.min(y + margin, document.documentElement.clientHeight + window.scrollY - buttonHeight - margin);
+      // 调整位置确保在视口内
+      let posX = Math.min(x, document.documentElement.clientWidth + window.scrollX - buttonWidth - margin);
+      let posY = Math.min(y, document.documentElement.clientHeight + window.scrollY - buttonHeight - margin);
       
       // 确保不会显示在页面外
       posX = Math.max(window.scrollX + margin, posX);
@@ -787,11 +790,11 @@ ${code}
       // 创建选择按钮，但不显示
       selectionButton = createSelectionButton();
 
-      // 监听文本选择事件
+      // 监听文本选择事件，传递事件对象
       document.addEventListener('mouseup', handleTextSelection);
       document.addEventListener('selectionchange', () => {
         // 延迟一点处理选择变化，确保选择已完成
-        setTimeout(handleTextSelection, 10);
+        setTimeout(() => handleTextSelection(), 10);
       });
 
       // 监听系统暗黑模式变化
