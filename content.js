@@ -6,6 +6,63 @@
   let selectionButton = null; // 添加选择按钮变量
   let isDarkMode = false; // 添加暗黑模式标志
 
+  // 加载提示相关变量
+  let loadingMessagesInterval = null;
+  const loadingMessages = [
+    "正在深入分析代码中...",
+    "正在思考如何吐槽你的代码...",
+    "正在查找可能的bug，别担心，肯定能找到几个...",
+    "正在思考怎么婉转地表达'这代码写得真糟糕'...",
+    "正在计算代码的'哎呀妈呀'指数...",
+    "正在组织语言，准备好了PUA你...",
+    "正在思考怎么用东北话评价这段代码...",
+    "代码分析中，搁这儿等着哈...",
+    "这代码可真有意思，让我好好琢磨琢磨...",
+    "正在思考这代码是咋想的...",
+    "嚯！这代码有点东西，容我细看...",
+    "正在给你的代码挑刺儿...",
+    "这代码啊，嗯...让我想想怎么说...",
+    "正在组织语言，一会儿好好夸夸你...(才怪)",
+    "代码分析中，马上就能告诉你哪写得不好..."
+  ];
+  
+  // 启动加载提示循环
+  function startLoadingMessages() {
+    if (loadingMessagesInterval) {
+      clearInterval(loadingMessagesInterval);
+    }
+    
+    const loadingTextElement = reviewPanel.querySelector('.loading-text');
+    if (!loadingTextElement) return; // 确保元素存在
+    
+    let messageIndex = 0;
+    
+    // 立即显示第一条消息
+    loadingTextElement.textContent = loadingMessages[messageIndex];
+    
+    // 设置定时器，每3秒更换一条消息
+    loadingMessagesInterval = setInterval(() => {
+      messageIndex = (messageIndex + 1) % loadingMessages.length;
+      
+      // 添加淡入淡出效果
+      loadingTextElement.style.opacity = '0';
+      
+      setTimeout(() => {
+        loadingTextElement.textContent = loadingMessages[messageIndex];
+        loadingTextElement.style.opacity = '1';
+      }, 300);
+      
+    }, 3000);
+  }
+  
+  // 停止加载提示循环
+  function stopLoadingMessages() {
+    if (loadingMessagesInterval) {
+      clearInterval(loadingMessagesInterval);
+      loadingMessagesInterval = null;
+    }
+  }
+
   // 检查是否是GitLab MR页面
   function checkIfGitLabMRPage() {
     // 检查URL包含merge_requests或diffs
@@ -38,7 +95,7 @@
     selectionButton.className = 'gitlab-ai-selection-button hidden';
     selectionButton.innerHTML = `
       <button title="AI 代码评审">
-        <img src="${chrome.runtime.getURL('images/icon16.png')}" alt="AI 代码评审" width="16" height="16">
+        <img src="${chrome.runtime.getURL('images/icon48.png')}" alt="AI 代码评审" width="16" height="16">
       </button>
     `;
 
@@ -96,7 +153,7 @@
       <div class="review-content">
         <div class="loading hidden">
           <div class="spinner"></div>
-          <p>正在分析代码...</p>
+          <p class="loading-text">正在分析代码...</p>
         </div>
         <div class="review-result"></div>
       </div>
@@ -405,11 +462,17 @@ ${code}
     reviewPanel.classList.remove('hidden');
     reviewPanel.querySelector('.loading').classList.remove('hidden');
     reviewPanel.querySelector('.review-result').innerHTML = '';
+    
+    // 启动有趣的加载提示
+    startLoadingMessages();
 
     // 进行代码评审
     const reviewResult = await reviewCodeWithLLM(selectedCode);
     console.log("reviewResult:", reviewResult);
 
+    // 停止加载提示
+    stopLoadingMessages();
+    
     // 隐藏加载状态，显示结果
     reviewPanel.querySelector('.loading').classList.add('hidden');
 
@@ -910,3 +973,402 @@ ${code}
     init();
   }
 })();
+
+
+// 加载提示相关变量
+let loadingMessagesInterval = null;
+const loadingMessages = [
+  "正在深入分析代码中...",
+  "正在思考如何吐槽你的代码...",
+  "正在查找可能的bug，别担心，肯定能找到几个...",
+  "正在思考怎么婉转地表达'这代码写得真糟糕'...",
+  "正在计算代码的'哎呀妈呀'指数...",
+  "正在组织语言，准备好了PUA你...",
+  "正在思考怎么用东北话评价这段代码...",
+  "代码分析中，搁这儿等着哈...",
+  "这代码可真有意思，让我好好琢磨琢磨...",
+  "正在思考这代码是咋想的...",
+  "嚯！这代码有点东西，容我细看...",
+  "正在给你的代码挑刺儿...",
+  "这代码啊，嗯...让我想想怎么说...",
+  "正在组织语言，一会儿好好夸夸你...(才怪)",
+  "代码分析中，马上就能告诉你哪写得不好..."
+];
+
+// 启动加载提示循环
+function startLoadingMessages() {
+  if (loadingMessagesInterval) {
+    clearInterval(loadingMessagesInterval);
+  }
+  
+  const loadingTextElement = reviewPanel.querySelector('.loading-text');
+  let messageIndex = 0;
+  
+  // 立即显示第一条消息
+  loadingTextElement.textContent = loadingMessages[messageIndex];
+  
+  // 设置定时器，每3秒更换一条消息
+  loadingMessagesInterval = setInterval(() => {
+    messageIndex = (messageIndex + 1) % loadingMessages.length;
+    
+    // 添加淡入淡出效果
+    loadingTextElement.style.opacity = '0';
+    
+    setTimeout(() => {
+      loadingTextElement.textContent = loadingMessages[messageIndex];
+      loadingTextElement.style.opacity = '1';
+    }, 300);
+    
+  }, 3000);
+}
+
+// 停止加载提示循环
+function stopLoadingMessages() {
+  if (loadingMessagesInterval) {
+    clearInterval(loadingMessagesInterval);
+    loadingMessagesInterval = null;
+  }
+}
+
+// 添加CSS样式
+function init() {
+  isGitLabMergeRequestPage = checkIfGitLabMRPage();
+  isDarkMode = detectDarkMode(); // 检测暗黑模式
+
+  if (isGitLabMergeRequestPage) {
+    // 添加样式
+    const style = document.createElement('style');
+    style.textContent = `
+      .gitlab-ai-review-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 350px;
+        height: 100vh;
+        background: white;
+        color: #333;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+      }
+      
+      /* 调整大小手柄样式 */
+      .resize-handle {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 5px;
+        height: 100%;
+        cursor: ew-resize;
+        background: transparent;
+      }
+      
+      .resize-handle:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      
+      .dark-mode .resize-handle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      
+      /* 暗黑模式样式 */
+      .gitlab-ai-review-panel.dark-mode {
+        background: #1f1f1f;
+        color: #e0e0e0;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.5);
+      }
+      
+      .gitlab-ai-review-panel.hidden {
+        transform: translateX(100%);
+      }
+      
+      .gitlab-ai-selection-button {
+        position: absolute;
+        z-index: 9998;
+        transition: opacity 0.2s ease;
+      }
+      
+      .gitlab-ai-selection-button.hidden {
+        display: none;
+      }
+      
+      .gitlab-ai-selection-button button {
+        background: transparent;  /* 改为透明背景 */
+        color: white;
+        border: none;             /* 移除边框 */
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;               /* 移除内边距 */
+        box-shadow: none;         /* 移除阴影 */
+      }
+      
+      .gitlab-ai-selection-button button:hover {
+        background: rgba(0, 0, 0, 0.1);  /* 悬停时显示轻微背景 */
+      }
+      
+      .dark-mode .gitlab-ai-selection-button button:hover {
+        background: rgba(255, 255, 255, 0.1);  /* 暗黑模式下悬停效果 */
+      }
+      
+      .gitlab-ai-selection-button img {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: #1f75cb;
+        color: white;
+        flex-shrink: 0;
+      }
+      
+      .dark-mode .review-header {
+        background: #0f3b66;  /* 暗黑模式下更深的蓝色 */
+      }
+      
+      .review-header h3 {
+        margin: 0;
+        font-size: 16px;
+      }
+      
+      .review-actions {
+        display: flex;
+        gap: 8px;
+      }
+      
+      .review-actions button {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+      }
+      
+      .review-actions button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      
+      .review-content {
+        padding: 16px;
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+      
+      .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        height: 100%;
+      }
+      
+      .loading.hidden {
+        display: none;
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #1f75cb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      .dark-mode .spinner {
+        border: 4px solid #333;
+        border-top: 4px solid #1f75cb;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .review-result {
+        line-height: 1.5;
+        font-size: 14px;
+      }
+      
+      .review-result pre {
+        background: #f5f5f5;
+        padding: 12px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      
+      .dark-mode .review-result pre {
+        background: #2a2a2a;
+        color: #e0e0e0;
+      }
+      
+      .review-result ul, .review-result ol {
+        padding-left: 20px;
+      }
+      
+      .dark-mode .review-result a {
+        color: #6cb5ff;
+      }
+      
+      .dark-mode .review-result code {
+        background: #333;
+        color: #f0f0f0;
+      }
+      
+      .error-message {
+        background-color: #fff8f8;
+        border-left: 4px solid #e74c3c;
+        padding: 15px;
+        border-radius: 4px;
+      }
+      
+      .dark-mode .error-message {
+        background-color: #3a2a2a;
+        border-left: 4px solid #e74c3c;
+      }
+      
+      .error-message h3 {
+        color: #e74c3c;
+        margin-top: 0;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // 创建评审面板，但不显示
+    reviewPanel = createReviewPanel();
+    
+    // 使面板可拖动和可调整大小
+    makePanelDraggable();
+    makePanelResizable();
+
+    // 创建选择按钮，但不显示
+    selectionButton = createSelectionButton();
+
+    // 监听文本选择事件，传递事件对象
+    document.addEventListener('mouseup', handleTextSelection);
+    document.addEventListener('selectionchange', () => {
+      // 延迟一点处理选择变化，确保选择已完成
+      setTimeout(() => handleTextSelection(), 10);
+    });
+
+    // 监听系统暗黑模式变化
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        updateDarkMode();
+      });
+    }
+  }
+}
+
+// 更新暗黑模式
+function updateDarkMode() {
+  const newDarkMode = detectDarkMode();
+  if (newDarkMode !== isDarkMode) {
+    isDarkMode = newDarkMode;
+    if (reviewPanel) {
+      if (isDarkMode) {
+        reviewPanel.classList.add('dark-mode');
+      } else {
+        reviewPanel.classList.remove('dark-mode');
+      }
+    }
+  }
+}
+
+// 使面板可拖动
+function makePanelDraggable() {
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  const header = reviewPanel.querySelector('.review-header');
+
+  header.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.review-actions')) {
+      return;
+    }
+
+    isDragging = true;
+    offsetX = e.clientX - reviewPanel.getBoundingClientRect().left;
+    offsetY = e.clientY - reviewPanel.getBoundingClientRect().top;
+
+    header.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const x = e.clientX - offsetX;
+    const y = e.clientY - offsetY;
+
+    reviewPanel.style.left = `${Math.max(0, Math.min(window.innerWidth - reviewPanel.offsetWidth, x))}px`;
+    reviewPanel.style.right = 'auto';
+    reviewPanel.style.bottom = 'auto';
+    reviewPanel.style.top = `${Math.max(0, Math.min(window.innerHeight - reviewPanel.offsetHeight, y))}px`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      header.style.cursor = 'grab';
+    }
+  });
+
+  header.style.cursor = 'grab';
+}
+
+// 使面板可调整大小
+function makePanelResizable() {
+  // 创建调整大小的手柄
+  const resizeHandle = document.createElement('div');
+  resizeHandle.className = 'resize-handle';
+  reviewPanel.appendChild(resizeHandle);
+  
+  let isResizing = false;
+  let startX, startWidth;
+  
+  resizeHandle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    startX = e.clientX;
+    startWidth = parseInt(document.defaultView.getComputedStyle(reviewPanel).width, 10);
+    
+    document.body.style.cursor = 'ew-resize';
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    
+    // 计算新宽度 (从右侧减少宽度)
+    const newWidth = startWidth - (e.clientX - startX);
+    
+    // 限制最小宽度
+    if (newWidth > 250) {
+      reviewPanel.style.width = `${newWidth}px`;
+    }
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
+    }
+  });
+}

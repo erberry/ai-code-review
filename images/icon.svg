@@ -1,0 +1,20 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect x="0" y="0" width="128" height="128" rx="16" fill="#FF4500" />
+  
+  <!-- 代码括号 -->
+  <path d="M40,32 L24,64 L40,96" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M88,32 L104,64 L88,96" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- AI 元素 - 圆形连接点 -->
+  <circle cx="64" cy="64" r="20" fill="#FFFF00" opacity="0.9" />
+  
+  <!-- 连接线 - 代表AI分析 -->
+  <path d="M64,44 L64,36" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+  <path d="M64,92 L64,84" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+  <path d="M44,64 L36,64" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+  <path d="M92,64 L84,64" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+  
+  <!-- 对勾 - 代表审查通过 -->
+  <path d="M58,64 L62,68 L70,60" stroke="#FF4500" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
