@@ -1,6 +1,6 @@
 // background.js
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('GitLab AI Code Review 扩展已安装');
+  console.log('AI Code Review 扩展已安装');
 });
 
 // 创建右键菜单
