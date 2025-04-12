@@ -511,12 +511,29 @@ ${code}
       // 获取选择区域的位置
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
-
-      // 修改按钮位置，显示在选择区域的左下方
-      const x = rect.left + window.scrollX - 20; // 向左偏移20px
-      const y = rect.bottom + window.scrollY - 5; // 底部位置下移5px
-
-      showSelectionButton(x, y);
+      
+      // 计算视口中的位置
+      const viewportX = rect.left;
+      const viewportY = rect.bottom;
+      
+      // 计算文档中的绝对位置
+      const x = viewportX + window.scrollX;
+      const y = viewportY + window.scrollY;
+      
+      // 确保按钮不会超出视口边界
+      const buttonWidth = 28; // 按钮宽度
+      const buttonHeight = 28; // 按钮高度
+      const margin = 5; // 与选择区域的间距
+      
+      // 优先显示在选择区域的右下角，如果空间不足则调整
+      let posX = Math.min(x + margin, document.documentElement.clientWidth + window.scrollX - buttonWidth - margin);
+      let posY = Math.min(y + margin, document.documentElement.clientHeight + window.scrollY - buttonHeight - margin);
+      
+      // 确保不会显示在页面外
+      posX = Math.max(window.scrollX + margin, posX);
+      posY = Math.max(window.scrollY + margin, posY);
+      
+      showSelectionButton(posX, posY);
     } else {
       hideSelectionButton();
     }
